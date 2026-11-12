@@ -10,7 +10,7 @@ require (
 	github.com/spf13/cobra v1.10.2
 	github.com/woodleighschool/goodies/auth v1.1.1-0.20261112102811-eb85a57a3a9c
 	go.yaml.in/yaml/v4 v4.0.0
-	golang.org/x/net v0.61.0
+	golang.org/x/net v0.62.0
 	golang.org/x/oauth2 v0.38.0
 )
 
