@@ -6,8 +6,10 @@ export function SetupInstructions({ clients }: { clients: string[] }) {
   const enabled = enabledClients(clients);
   if (!enabled.length) return null;
   return (
-    <div className="border-t pt-5">
-      <h3 className="mb-3 text-sm font-medium">Add to Your Email App</h3>
+    <section aria-labelledby="setup-title">
+      <h2 id="setup-title" className="mb-5 flex min-h-8 items-center text-lg font-semibold">
+        3. Add to Your Email App
+      </h2>
       <Tabs defaultValue={enabled[0].id}>
         <TabsList variant="line" className="h-auto flex-wrap justify-start">
           {enabled.map((client) => (
@@ -48,6 +50,6 @@ export function SetupInstructions({ clients }: { clients: string[] }) {
           </TabsContent>
         ))}
       </Tabs>
-    </div>
+    </section>
   );
 }

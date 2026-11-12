@@ -70,7 +70,7 @@ export function Editor({ metadata, user }: { metadata: Form; user?: Identity }) 
         <section aria-labelledby="details-title" className="min-w-0">
           <div className="mb-5 flex min-h-8 items-center">
             <h2 id="details-title" className="text-lg font-semibold">
-              Details
+              1. Details
             </h2>
           </div>
           <form noValidate onSubmit={(event) => event.preventDefault()}>
