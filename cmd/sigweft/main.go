@@ -14,9 +14,9 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/caarlos0/env/v11"
 	"github.com/invopop/jsonschema"
 	"github.com/spf13/cobra"
+	"github.com/woodleighschool/sigweft/internal/account"
 	"github.com/woodleighschool/sigweft/internal/config"
 	"github.com/woodleighschool/sigweft/internal/server"
 	"github.com/woodleighschool/sigweft/internal/signature"
@@ -24,11 +24,6 @@ import (
 )
 
 var version = "dev"
-
-type settings struct {
-	Config string `env:"CONFIG" envDefault:"config.yaml"`
-	Listen string `env:"LISTEN" envDefault:":8080"`
-}
 
 func main() {
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
@@ -41,9 +36,9 @@ func main() {
 }
 
 func run(ctx context.Context) error {
-	var opts settings
-	if err := env.ParseWithOptions(&opts, env.Options{Prefix: "SIGWEFT_"}); err != nil {
-		return fmt.Errorf("read environment: %w", err)
+	opts, err := config.LoadRuntime()
+	if err != nil {
+		return err
 	}
 	logger := slog.New(slog.NewJSONHandler(os.Stderr, nil))
 	root := &cobra.Command{Use: "sigweft", Short: "Generate consistent email signatures", Version: version, SilenceUsage: true, SilenceErrors: true}
@@ -54,7 +49,11 @@ func run(ctx context.Context) error {
 			if err != nil {
 				return err
 			}
-			handler, _ := server.New(renderer, web.Files(), logger, version)
+			auth, err := account.New(cmd.Context(), opts, logger)
+			if err != nil {
+				return err
+			}
+			handler, _ := server.New(renderer, web.Files(), logger, version, auth)
 			return serve(cmd.Context(), opts.Listen, handler, logger)
 		}})
 	root.AddCommand(&cobra.Command{Use: "validate", Short: "Validate configuration, template and assets", Args: cobra.NoArgs,
@@ -71,7 +70,7 @@ func run(ctx context.Context) error {
 		}})
 	root.AddCommand(&cobra.Command{Use: "openapi", Short: "Print the API schema", Args: cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
-			_, api := server.New(nil, nil, logger, version)
+			_, api := server.New(nil, nil, logger, version, nil)
 			return writeJSON(cmd.OutOrStdout(), api.OpenAPI())
 		}})
 	return root.ExecuteContext(ctx)

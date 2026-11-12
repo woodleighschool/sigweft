@@ -8,6 +8,7 @@ export default defineConfig({
   build: { license: { fileName: "THIRD_PARTY_NOTICES.md" } },
   resolve: {
     alias: {
+      "@features": path.resolve(import.meta.dirname, "./src/features"),
       "@components": path.resolve(import.meta.dirname, "./src/components"),
       "@lib": path.resolve(import.meta.dirname, "./src/lib"),
       "@hooks": path.resolve(import.meta.dirname, "./src/hooks"),

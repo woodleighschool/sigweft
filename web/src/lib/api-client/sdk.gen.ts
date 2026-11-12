@@ -2,7 +2,7 @@
 
 import type { Client, ClientMeta, Options as Options2, RequestResult, TDataShape } from './client';
 import { client } from './client.gen';
-import type { GetFormData, GetFormErrors, GetFormResponses, RenderSignatureData, RenderSignatureErrors, RenderSignatureResponses } from './types.gen';
+import type { DeleteSessionData, DeleteSessionErrors, DeleteSessionResponses, GetFormData, GetFormErrors, GetFormResponses, GetSessionData, GetSessionErrors, GetSessionResponses, RenderSignatureData, RenderSignatureErrors, RenderSignatureResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -28,3 +28,7 @@ export const renderSignature = <ThrowOnError extends boolean = false>(options: O
         ...options.headers
     }
 });
+
+export const deleteSession = <ThrowOnError extends boolean = false>(options?: Options<DeleteSessionData, ThrowOnError>): RequestResult<DeleteSessionResponses, DeleteSessionErrors, ThrowOnError> => (options?.client ?? client).delete<DeleteSessionResponses, DeleteSessionErrors, ThrowOnError>({ url: '/api/session', ...options });
+
+export const getSession = <ThrowOnError extends boolean = false>(options?: Options<GetSessionData, ThrowOnError>): RequestResult<GetSessionResponses, GetSessionErrors, ThrowOnError> => (options?.client ?? client).get<GetSessionResponses, GetSessionErrors, ThrowOnError>({ url: '/api/session', ...options });

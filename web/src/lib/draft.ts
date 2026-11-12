@@ -1,8 +1,18 @@
-import type { Form } from "./api-client/types.gen";
+import type { Form, Identity } from "./api-client/types.gen";
 import { initialValues, type Values } from "./form.ts";
 
-export function restoreDraft(form: Form, json: string | null): Values {
-  const defaults = initialValues(form.fields ?? []);
+export function draftKey(form: Form, user?: Identity): string {
+  return user
+    ? `sigweft:${JSON.stringify([form.title, user.issuer, user.subject])}`
+    : `sigweft:${form.title}`;
+}
+
+export function restoreDraft(form: Form, json: string | null, user?: Identity): Values {
+  const prefills: Values = {};
+  for (const field of form.fields ?? []) {
+    if (field.prefill && user?.[field.prefill]) prefills[field.id] = user[field.prefill];
+  }
+  const defaults = initialValues(form.fields ?? [], prefills);
   const values: Values = {};
   if (!json) return defaults;
   let saved: unknown;
@@ -24,20 +34,20 @@ export function restoreDraft(form: Form, json: string | null): Values {
       values[field.id] = value;
     }
   }
-  return initialValues(form.fields ?? [], values);
+  return initialValues(form.fields ?? [], { ...prefills, ...values });
 }
 
-export function loadDraft(form: Form): Values {
+export function loadDraft(form: Form, user?: Identity): Values {
   try {
-    return restoreDraft(form, localStorage.getItem(`sigweft:${form.title}`));
+    return restoreDraft(form, localStorage.getItem(draftKey(form, user)), user);
   } catch {
-    return initialValues(form.fields ?? []);
+    return restoreDraft(form, null, user);
   }
 }
 
-export function saveDraft(title: string, values: Values): void {
+export function saveDraft(form: Form, user: Identity | undefined, values: Values): void {
   try {
-    const key = `sigweft:${title}`;
+    const key = draftKey(form, user);
     localStorage.setItem(key, JSON.stringify(values));
   } catch {
     // Storage can be unavailable in restricted browser sessions.

@@ -58,6 +58,7 @@ export type Field = {
     max_length?: number;
     options?: Array<Option> | null;
     placeholder?: string;
+    prefill?: 'name' | 'email';
     read_only?: boolean;
     required?: boolean;
     type: 'text' | 'email' | 'tel' | 'multiline' | 'text-list' | 'select' | 'checkbox';
@@ -72,6 +73,13 @@ export type Form = {
     email_clients: Array<string> | null;
     fields: Array<Field> | null;
     title: string;
+};
+
+export type Identity = {
+    email: string;
+    issuer: string;
+    name: string;
+    subject: string;
 };
 
 export type Option = {
@@ -102,6 +110,15 @@ export type Result = {
     };
     html: string;
     text: string;
+};
+
+export type Session = {
+    /**
+     * A URL to the JSON Schema for this object.
+     */
+    readonly $schema?: string;
+    sso_enabled: boolean;
+    user?: Identity;
 };
 
 export type ErrorModelWritable = {
@@ -152,6 +169,11 @@ export type ResultWritable = {
     text: string;
 };
 
+export type SessionWritable = {
+    sso_enabled: boolean;
+    user?: Identity;
+};
+
 export type GetFormData = {
     body?: never;
     path?: never;
@@ -161,9 +183,13 @@ export type GetFormData = {
 
 export type GetFormErrors = {
     /**
-     * Error
+     * Unauthorized
      */
-    default: ErrorModel;
+    401: ErrorModel;
+    /**
+     * Internal Server Error
+     */
+    500: ErrorModel;
 };
 
 export type GetFormError = GetFormErrors[keyof GetFormErrors];
@@ -186,9 +212,17 @@ export type RenderSignatureData = {
 
 export type RenderSignatureErrors = {
     /**
-     * Error
+     * Unauthorized
      */
-    default: ErrorModel;
+    401: ErrorModel;
+    /**
+     * Unprocessable Entity
+     */
+    422: ErrorModel;
+    /**
+     * Internal Server Error
+     */
+    500: ErrorModel;
 };
 
 export type RenderSignatureError = RenderSignatureErrors[keyof RenderSignatureErrors];
@@ -201,3 +235,53 @@ export type RenderSignatureResponses = {
 };
 
 export type RenderSignatureResponse = RenderSignatureResponses[keyof RenderSignatureResponses];
+
+export type DeleteSessionData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/session';
+};
+
+export type DeleteSessionErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type DeleteSessionError = DeleteSessionErrors[keyof DeleteSessionErrors];
+
+export type DeleteSessionResponses = {
+    /**
+     * No Content
+     */
+    204: void;
+};
+
+export type DeleteSessionResponse = DeleteSessionResponses[keyof DeleteSessionResponses];
+
+export type GetSessionData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/session';
+};
+
+export type GetSessionErrors = {
+    /**
+     * Error
+     */
+    default: ErrorModel;
+};
+
+export type GetSessionError = GetSessionErrors[keyof GetSessionErrors];
+
+export type GetSessionResponses = {
+    /**
+     * OK
+     */
+    200: Session;
+};
+
+export type GetSessionResponse = GetSessionResponses[keyof GetSessionResponses];

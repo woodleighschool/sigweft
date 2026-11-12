@@ -16,7 +16,7 @@ func TestFormAndRenderContract(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	handler, _ := New(renderer, nil, slog.New(slog.DiscardHandler), "test")
+	handler, _ := New(renderer, nil, slog.New(slog.DiscardHandler), "test", nil)
 	form := httptest.NewRecorder()
 	handler.ServeHTTP(form, httptest.NewRequestWithContext(t.Context(), http.MethodGet, "/api/form", nil))
 	if form.Code != 200 || form.Header().Get("Cache-Control") != "no-store" || strings.Contains(form.Body.String(), "12 Example Street") {

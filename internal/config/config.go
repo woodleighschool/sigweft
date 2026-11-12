@@ -33,6 +33,7 @@ type Field struct {
 	Placeholder string   `json:"placeholder,omitempty" yaml:"placeholder,omitempty"`
 	Required    bool     `json:"required,omitempty" yaml:"required,omitempty"`
 	ReadOnly    bool     `json:"read_only,omitempty" yaml:"read_only,omitempty"`
+	Prefill     string   `json:"prefill,omitempty" yaml:"prefill,omitempty" enum:"name,email" jsonschema:"enum=name,enum=email"`
 	Default     any      `json:"default,omitempty" yaml:"default,omitempty"`
 	MaxLength   int      `json:"max_length,omitempty" yaml:"max_length,omitempty" jsonschema:"minimum=1"`
 	Options     []Option `json:"options,omitempty" yaml:"options,omitempty"`
@@ -114,6 +115,14 @@ func (f *Field) validate() error {
 	case "text", "email", "tel", "multiline", "text-list", "select", "checkbox":
 	default:
 		return fmt.Errorf("unknown type %q", f.Type)
+	}
+	if f.Prefill != "" {
+		if f.Prefill != "name" && f.Prefill != "email" {
+			return fmt.Errorf("prefill must be name or email")
+		}
+		if (f.Type != "text" && f.Type != "email") || f.ReadOnly {
+			return fmt.Errorf("prefill requires an editable text or email field")
+		}
 	}
 	if f.MaxLength < 0 {
 		return fmt.Errorf("max_length must be positive")

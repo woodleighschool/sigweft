@@ -111,6 +111,13 @@
         "read_only": {
           "type": "boolean"
         },
+        "prefill": {
+          "type": "string",
+          "enum": [
+            "name",
+            "email"
+          ]
+        },
         "default": true,
         "max_length": {
           "type": "integer",

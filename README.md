@@ -19,12 +19,14 @@ Copy the example configuration and edit its YAML, template and images:
 ```bash
 mkdir -p config
 cp -R examples/studio config/my-org
+cp .env.example .env
 ```
 
-Run the container with that directory mounted:
+Set the public URL and OIDC credentials in `.env` to require sign-in, then run the container with that directory mounted:
 
 ```bash
 docker run --rm -p 8080:8080 \
+  --env-file .env \
   --volume "$PWD/config/my-org:/config:ro" \
   --env SIGWEFT_CONFIG=/config/sigweft.yaml \
   ghcr.io/woodleighschool/sigweft:rolling
@@ -51,6 +53,29 @@ sigweft serve --config config/my-org/sigweft.yaml
 `--config` overrides `SIGWEFT_CONFIG`. `/healthz` is the health endpoint.
 
 The [example YAML](examples/studio/sigweft.yaml) and [template](examples/studio/signature.html) show location choices, multiple roles, working hours, conditional content and images. The [JSON Schema](sigweft.schema.json) provides editor completion. Unknown keys and duplicate mappings are rejected.
+
+### Authentication
+
+SSO uses OpenID Connect. Set the issuer URL, client ID and client secret together to require sign-in. Leaving all three unset allows public access; partial configuration fails at startup.
+
+| Variable                        | Default                                | Purpose                                 |
+| ------------------------------- | -------------------------------------- | --------------------------------------- |
+| `SIGWEFT_URL`                   | empty                                  | Public browser URL                      |
+| `SIGWEFT_SESSION_COOKIE_SECURE` | `true`                                 | Send the session cookie over HTTPS only |
+| `SIGWEFT_OIDC_ISSUER_URL`       | empty                                  | Identity provider's issuer URL          |
+| `SIGWEFT_OIDC_CLIENT_ID`        | empty                                  | OAuth client ID                         |
+| `SIGWEFT_OIDC_CLIENT_SECRET`    | empty                                  | OAuth client secret                     |
+| `SIGWEFT_OIDC_REDIRECT_URL`     | `${SIGWEFT_URL}/api/auth/sso/callback` | Registered callback URL                 |
+| `SIGWEFT_OIDC_SCOPES`           | `openid,email,profile`                 | Requested scopes, comma-separated       |
+| `SIGWEFT_OIDC_EMAIL_CLAIM`      | `email`                                | Claim used to prefill email fields      |
+
+For Entra, use a tenant-specific issuer (`https://login.microsoftonline.com/<tenant-id>/v2.0`). Register the callback as a Web redirect URI, require assignment on the enterprise application, and assign the staff group. Tenant membership alone does not establish staff access. [Entra application assignment](https://learn.microsoft.com/en-us/entra/identity-platform/howto-restrict-your-app-to-a-set-of-users) controls admission; Graph permissions and directory sync are not required.
+
+Set `prefill: name` or `prefill: email` on an editable text or email field to use the corresponding identity claim. Saved edits take precedence. Staff can enter a shared mailbox's name and address without changing their signed-in identity. Missing claims leave the configured default or an empty field.
+
+Drafts are stored in the browser per signed-in account. Sessions expire after 14 days and are held in memory, so this setup uses one server instance and restarts require sign-in again. Assignment changes take effect at the next sign-in. Log Out ends the application's session; the identity provider manages its own session.
+
+For local HTTP development, set `SIGWEFT_SESSION_COOKIE_SECURE=false` and register `http://localhost:5177/api/auth/sso/callback`. Production uses HTTPS.
 
 ### Fields
 
@@ -108,11 +133,11 @@ mise run lint
 mise run check
 ```
 
-Open <http://localhost:5177>. The default configuration is the fictional North Studio example. Use `SIGWEFT_CONFIG=config/my-org/sigweft.yaml mise run dev` for a local deployment.
+Open <http://localhost:5177>. The default configuration is the fictional North Studio example. Export values from `.env` when testing SSO locally; the app reads environment variables. Use `SIGWEFT_CONFIG=config/my-org/sigweft.yaml mise run dev` for a local deployment.
 
 Backend code lives under `cmd/sigweft` and `internal/`; the React app lives under `web/`. The built Go binary embeds the web bundle.
 
-Run `mise run generate` after changing configuration types or the API contract. `mise run frontend-check` checks generated files, formatting, frontend lint and the build. Go tests use synthetic identities and local fixtures; the frontend has no test suite.
+Run `mise run generate` after changing configuration types or the API contract. `mise run frontend-check` checks generated files, formatting, frontend lint and the build. Go tests use synthetic identities and a local OIDC provider.
 
 Use `mise run build` for the binary or `mise run container-build` for a local container. `mise run format` formats the source; `mise run vulncheck` checks Go dependencies.
 
