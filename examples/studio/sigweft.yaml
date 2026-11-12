@@ -1,0 +1,85 @@
+---
+# yaml-language-server: $schema=../../sigweft.schema.json
+title: North Studio
+description: Enter your details, check the preview, then copy your signature.
+template: signature.html
+email_clients: [outlook-web, outlook-mac, apple-mail]
+
+data:
+  website: https://example.org/
+  locations: [City studio, Riverside studio, Remote]
+
+fields:
+  - id: display_name
+    label: Name
+    type: text
+    required: true
+
+  - id: pronouns
+    label: Pronouns
+    type: text
+    description: they/them, she/her, he/him
+
+  - id: disciplines
+    label: Roles
+    type: text-list
+    description: One role per line.
+
+  - id: contact
+    label: Email Address
+    type: email
+    required: true
+
+  - id: studio_name
+    label: Studio
+    type: text
+    default: North Studio
+    read_only: true
+
+  - id: base
+    label: Primary Location
+    type: select
+    options:
+      - value: city
+        label: City studio
+        data:
+          address: 12 Example Street
+          phone: "+1 202 555 0101"
+
+      - value: riverside
+        label: Riverside studio
+        data:
+          address: 34 Example Avenue
+          phone: "+1 202 555 0102"
+
+      - value: remote
+        label: Remote
+        data:
+          address: Working remotely
+          phone: "+1 202 555 0103"
+
+  - id: schedule
+    label: Working Hours
+    placeholder: Monday to Thursday
+    type: multiline
+    description: Leave blank for normal working hours. Otherwise, include your days, hours and locations.
+
+  - id: available
+    label: Available for New Projects
+    type: checkbox
+    default: false
+
+assets:
+  emblem:
+    file: assets/emblem.png
+    alt: North Studio
+    width: 48
+    height: 48
+    href: https://example.org/
+
+  campaign:
+    file: assets/campaign.png
+    alt: An exploration of shape and colour by North Studio
+    width: 520
+    height: 104
+    href: https://example.org/work

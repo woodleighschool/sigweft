@@ -1,0 +1,43 @@
+[tasks.deps]
+run = "pnpm install --frozen-lockfile"
+
+[tasks.dev]
+depends = [":deps"]
+run = """
+pnpm run dev
+"""
+
+[tasks.build]
+description = "Type-check and build the web bundle"
+depends = [":deps"]
+run = "pnpm run build"
+
+[tasks.serve]
+description = "Serve the production build"
+run = "pnpm exec vite preview"
+
+[tasks.lint]
+depends = [":deps"]
+run = "pnpm run lint"
+
+[tasks.lint-fix]
+depends = [":deps"]
+run = "pnpm run lint:fix"
+
+[tasks.typecheck]
+depends = [":deps"]
+run = "pnpm run typecheck"
+
+[tasks.format]
+run = "oxfmt ."
+
+[tasks.fmt-check]
+run = "oxfmt --check"
+
+[tasks.openapi-types]
+description = "Generate web OpenAPI client types"
+depends = [":deps"]
+run = "pnpm run openapi:types"
+
+[tasks.clean]
+run = "rm -rf dist"

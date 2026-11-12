@@ -1,0 +1,32 @@
+# Go
+/sigweft
+/bin/
+*.test
+go.work
+go.work.sum
+
+# Node.js
+node_modules/
+/web/dist/*
+!/web/dist/.gitkeep
+*.tsbuildinfo
+
+# Local configuration
+/config/
+.env
+.env.*
+!.env.example
+*.eml
+
+# Local Mise
+.mise.local.toml
+.mise.local.lock
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Generated dependency licenses
+/third_party_licenses/

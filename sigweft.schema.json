@@ -1,0 +1,156 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/woodleighschool/sigweft/internal/config/config",
+  "$ref": "#/$defs/Config",
+  "$defs": {
+    "Asset": {
+      "properties": {
+        "file": {
+          "type": "string",
+          "minLength": 1
+        },
+        "alt": {
+          "type": "string"
+        },
+        "width": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "height": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "href": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "file",
+        "alt",
+        "width",
+        "height"
+      ]
+    },
+    "Config": {
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string"
+        },
+        "email_clients": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "template": {
+          "type": "string",
+          "minLength": 1
+        },
+        "data": {
+          "type": "object"
+        },
+        "fields": {
+          "items": {
+            "$ref": "#/$defs/Field"
+          },
+          "type": "array",
+          "minItems": 1
+        },
+        "assets": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Asset"
+          },
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "title",
+        "template",
+        "fields"
+      ]
+    },
+    "Field": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]*$"
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "text",
+            "email",
+            "tel",
+            "multiline",
+            "text-list",
+            "select",
+            "checkbox"
+          ]
+        },
+        "description": {
+          "type": "string"
+        },
+        "placeholder": {
+          "type": "string"
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "read_only": {
+          "type": "boolean"
+        },
+        "default": true,
+        "max_length": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "options": {
+          "items": {
+            "$ref": "#/$defs/Option"
+          },
+          "type": "array"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "id",
+        "label",
+        "type"
+      ]
+    },
+    "Option": {
+      "properties": {
+        "value": {
+          "type": "string",
+          "minLength": 1
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1
+        },
+        "data": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "value",
+        "label"
+      ]
+    }
+  }
+}

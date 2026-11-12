@@ -1,0 +1,80 @@
+---
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - "**.md"
+  release:
+    types:
+      - published
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name != 'release' }}
+
+jobs:
+  versions:
+    name: Versions
+    runs-on: ubuntu-26.04
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    outputs:
+      go-version: ${{ steps.versions.outputs.go-version }}
+      node-version: ${{ steps.versions.outputs.node-version }}
+      go-licenses-version: ${{ steps.versions.outputs.go-licenses-version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Setup Mise
+        uses: jdx/mise-action@b44d12e7d0d8ee7461bb893e1b1993500433185b # v5.2.7
+        with:
+          install: false
+          cache: false
+
+      - name: Resolve versions
+        id: versions
+        run: |
+          echo "go-version=$(mise config get tools.go)" >> "$GITHUB_OUTPUT"
+          echo "node-version=$(mise config get tools.node)" >> "$GITHUB_OUTPUT"
+          echo "go-licenses-version=$(mise tool go:github.com/google/go-licenses/v2 --requested)" >> "$GITHUB_OUTPUT"
+
+  release:
+    needs: versions
+    name: Container
+    permissions:
+      contents: read
+      id-token: write
+      packages: write
+    uses: docker/github-builder/.github/workflows/build.yml@a31d2311da4d55e21b978c1c52bab82ba97d51ee # v1.19.0
+    with:
+      build-args: |
+        GO_VERSION=${{ needs.versions.outputs.go-version }}
+        NODE_VERSION=${{ needs.versions.outputs.node-version }}
+        GO_LICENSES_VERSION=${{ needs.versions.outputs.go-licenses-version }}
+        VERSION=${{ github.ref_name }}
+      cache: true
+      meta-images: ghcr.io/${{ github.repository }}
+      meta-tags: |
+        type=semver,pattern={{version}}
+        type=raw,value=rolling,enable=${{ github.event_name == 'release' }}
+        type=ref,event=branch
+      output: image
+      platforms: linux/amd64,linux/arm64
+      push: true
+      sbom: true
+      set-meta-annotations: true
+      set-meta-labels: true
+      sign: "true"
+    secrets:
+      registry-auths: |
+        - registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
