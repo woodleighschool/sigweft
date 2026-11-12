@@ -3,14 +3,9 @@ package signature
 
 import (
 	"bytes"
-	"encoding/base64"
+	"context"
 	"fmt"
 	"html/template"
-	"image"
-	_ "image/gif" // Register supported email image formats.
-	_ "image/jpeg"
-	_ "image/png"
-	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
@@ -49,15 +44,15 @@ type Form struct {
 	Fields       []config.Field `json:"fields"`
 }
 
-type context struct {
+type templateData struct {
 	Fields  map[string]any
 	Choices map[string]map[string]any
 	Data    map[string]any
 	Assets  map[string]Asset
 }
 
-// Load reads all files at startup. Paths are confined to the configuration directory.
-func Load(path string) (*Renderer, error) {
+// Load reads configuration, templates and images once. Local paths are confined to the configuration directory.
+func Load(ctx context.Context, path string) (*Renderer, error) {
 	cfg, err := config.Load(path)
 	if err != nil {
 		return nil, err
@@ -81,7 +76,7 @@ func Load(path string) (*Renderer, error) {
 	}
 	r := &Renderer{config: cfg, template: tmpl, assets: make(map[string]Asset)}
 	for id, definition := range cfg.Assets {
-		asset, err := loadAsset(root, definition)
+		asset, err := loadAsset(ctx, root, definition)
 		if err != nil {
 			return nil, fmt.Errorf("asset %q: %w", id, err)
 		}
@@ -91,31 +86,6 @@ func Load(path string) (*Renderer, error) {
 		return nil, fmt.Errorf("validate template: %w", err)
 	}
 	return r, nil
-}
-
-func loadAsset(root *os.Root, definition config.Asset) (Asset, error) {
-	data, err := root.ReadFile(definition.File)
-	if err != nil {
-		return Asset{}, fmt.Errorf("read file: %w", err)
-	}
-	if len(data) > 2<<20 {
-		return Asset{}, fmt.Errorf("image exceeds 2 MiB")
-	}
-	_, format, err := image.DecodeConfig(bytes.NewReader(data))
-	if err != nil {
-		return Asset{}, fmt.Errorf("decode image: %w", err)
-	}
-	if definition.Href != "" {
-		link, err := url.Parse(definition.Href)
-		if err != nil || link.Host == "" || (link.Scheme != "https" && link.Scheme != "http") {
-			return Asset{}, fmt.Errorf("href must be an absolute HTTP or HTTPS URL")
-		}
-	}
-	return Asset{
-		// Only bytes from a decoded raster image may bypass html/template's URL filter.
-		Src: template.URL("data:image/" + format + ";base64," + base64.StdEncoding.EncodeToString(data)), //nolint:gosec // Validated local image bytes, not user input.
-		Alt: definition.Alt, Width: definition.Width, Height: definition.Height, Href: definition.Href,
-	}, nil
 }
 
 // Form strips administrator-owned data before returning form metadata.
@@ -135,7 +105,7 @@ func (r *Renderer) Form() Form {
 
 // Render resolves every value on the server. Invalid fields render empty and prevent copying.
 func (r *Renderer) Render(input map[string]any) (Result, error) {
-	ctx := context{
+	ctx := templateData{
 		Fields: make(map[string]any), Choices: make(map[string]map[string]any),
 		Data: r.config.Data, Assets: r.assets,
 	}

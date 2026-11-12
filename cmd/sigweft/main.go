@@ -45,7 +45,7 @@ func run(ctx context.Context) error {
 	root.PersistentFlags().StringVar(&opts.Config, "config", opts.Config, "Path to the organisation YAML configuration")
 	root.AddCommand(&cobra.Command{Use: "serve", Short: "Serve the signature generator", Args: cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
-			renderer, err := signature.Load(opts.Config)
+			renderer, err := signature.Load(cmd.Context(), opts.Config)
 			if err != nil {
 				return err
 			}
@@ -58,7 +58,7 @@ func run(ctx context.Context) error {
 		}})
 	root.AddCommand(&cobra.Command{Use: "validate", Short: "Validate configuration, template and assets", Args: cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
-			if _, err := signature.Load(opts.Config); err != nil {
+			if _, err := signature.Load(cmd.Context(), opts.Config); err != nil {
 				return err
 			}
 			_, err := fmt.Fprintln(cmd.OutOrStdout(), "Configuration is valid.")

@@ -12,7 +12,7 @@ import (
 )
 
 func TestFormAndRenderContract(t *testing.T) {
-	renderer, err := signature.Load("../../examples/studio/sigweft.yaml")
+	renderer, err := signature.Load(t.Context(), "../../examples/studio/sigweft.yaml")
 	if err != nil {
 		t.Fatal(err)
 	}

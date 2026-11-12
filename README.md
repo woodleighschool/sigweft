@@ -38,7 +38,7 @@ Enter your details, check the preview and copy into your email application's sig
 
 ## Configuration
 
-Each instance loads one YAML file at startup. Template and image paths are relative to that file and must stay within its directory. Validate configuration after editing, then restart the service:
+Each instance loads one YAML file at startup. Templates and local image paths are relative to that file and must stay within its directory. Images can also come from HTTP or HTTPS URLs. Validate configuration after editing, then restart the service:
 
 ```bash
 sigweft validate --config config/my-org/sigweft.yaml
@@ -110,7 +110,11 @@ Templates use Go `html/template`. Field values are escaped and validated before 
 
 Use `if`, `with` and `range` for optional content and lists. `upper` uppercases text, `lines` splits multiline text and `tel` builds a phone link. Missing template keys are errors. Use inline styles and presentation tables suitable for email.
 
-Assets have `file`, `alt`, `width`, `height` and an optional `href`. Images must be PNG, JPEG or GIF, at most 2 MiB each. The display dimensions can differ from the source dimensions. Image bytes are included in the signature; no image server is required.
+Assets have `src`, `alt`, `width`, `height` and an optional `href`. `src` accepts a relative file path or an absolute HTTP or HTTPS URL. Images must be PNG, JPEG or GIF, at most 2 MiB each. The display dimensions can differ from the source dimensions.
+
+Images are loaded once at startup and kept in memory. Remote downloads have a 10-second timeout and allow up to three redirects. An unavailable or invalid image prevents startup; running instances continue using their loaded images. Restart to pick up changed images. The `validate` command also loads remote images.
+
+The preview and copied HTML include the image bytes, so recipients do not need access to the source URL.
 
 Keep deployment-specific configuration, branding and staff correspondence outside version control. The local `config/` directory is ignored and excluded from container builds.
 

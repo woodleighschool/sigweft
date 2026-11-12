@@ -73,14 +73,14 @@ fields:
 
 assets:
   emblem:
-    file: assets/emblem.png
+    src: assets/emblem.png
     alt: North Studio
     width: 48
     height: 48
     href: https://example.org/
 
   campaign:
-    file: assets/campaign.png
+    src: assets/campaign.png
     alt: An exploration of shape and colour by North Studio
     width: 520
     height: 104

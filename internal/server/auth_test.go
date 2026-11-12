@@ -40,7 +40,7 @@ func TestSSOGateAndEditableSignature(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			renderer, err := signature.Load("../../examples/studio/sigweft.yaml")
+			renderer, err := signature.Load(t.Context(), "../../examples/studio/sigweft.yaml")
 			if err != nil {
 				t.Fatal(err)
 			}

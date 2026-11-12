@@ -46,9 +46,9 @@ type Option struct {
 	Data  map[string]any `json:"data,omitempty" yaml:"data,omitempty"`
 }
 
-// Asset defines a local raster image and its display dimensions.
+// Asset defines a raster image source and its display dimensions.
 type Asset struct {
-	File   string `json:"file" yaml:"file" jsonschema:"minLength=1"`
+	Src    string `json:"src" yaml:"src" jsonschema:"minLength=1"`
 	Alt    string `json:"alt" yaml:"alt"`
 	Width  int    `json:"width" yaml:"width" jsonschema:"minimum=1"`
 	Height int    `json:"height" yaml:"height" jsonschema:"minimum=1"`
@@ -93,8 +93,8 @@ func Parse(data []byte) (*Config, error) {
 		}
 	}
 	for id, asset := range cfg.Assets {
-		if !identifier.MatchString(id) || asset.File == "" || asset.Width <= 0 || asset.Height <= 0 {
-			return nil, fmt.Errorf("asset %q needs an identifier, file and positive dimensions", id)
+		if !identifier.MatchString(id) || strings.TrimSpace(asset.Src) == "" || asset.Width <= 0 || asset.Height <= 0 {
+			return nil, fmt.Errorf("asset %q needs an identifier, source and positive dimensions", id)
 		}
 	}
 	for _, client := range cfg.EmailClients {

@@ -13,7 +13,7 @@ import (
 
 func studio(t *testing.T) *Renderer {
 	t.Helper()
-	r, err := Load("../../examples/studio/sigweft.yaml")
+	r, err := Load(t.Context(), "../../examples/studio/sigweft.yaml")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -99,7 +99,7 @@ func TestInvalidChoicesAndInputTypesCannotReachTemplate(t *testing.T) {
 }
 
 func TestGenericExampleAndReadOnlyFields(t *testing.T) {
-	r, err := Load("../../examples/studio/sigweft.yaml")
+	r, err := Load(t.Context(), "../../examples/studio/sigweft.yaml")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -181,7 +181,20 @@ func TestConfigFilesStayInsideTheirDirectory(t *testing.T) {
 	if err := os.WriteFile(path, []byte(data), 0600); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := Load(path); err == nil {
+	if _, err := Load(t.Context(), path); err == nil {
 		t.Fatal("allowed template outside config directory")
+	}
+	if err := os.CopyFS(dir, os.DirFS("../../examples/studio/assets")); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(dir, "config/signature.html"), []byte("{{.Assets.logo.Src}}"), 0600); err != nil {
+		t.Fatal(err)
+	}
+	data = "title: Test\ntemplate: signature.html\nfields: [{id: name, label: Name, type: text}]\nassets: {logo: {src: ../emblem.png, alt: Example, width: 48, height: 48}}\n"
+	if err := os.WriteFile(path, []byte(data), 0600); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := Load(t.Context(), path); err == nil {
+		t.Fatal("allowed image outside config directory")
 	}
 }

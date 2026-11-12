@@ -1,6 +1,6 @@
 # AGENTS.md
 
-Sigweft renders email signatures from external YAML, HTML templates and image files. The Go server owns configuration, final validation and rendering. React uses TanStack Form for local validation, browser draft storage and copying the rendered output.
+Sigweft renders email signatures from external YAML, HTML templates and local or remote images. The Go server owns configuration, asset loading, final validation and rendering. React uses TanStack Form for local validation, browser draft storage and copying the rendered output.
 
 - `internal/config` loads and validates organisation configuration. `sigweft.schema.json` is generated from its types.
 - `internal/signature` resolves fields and renders the email artifact. It knows nothing about any particular organisation.
