@@ -1,5 +1,21 @@
 # Changelog
 
+## [2.0.0](https://github.com/woodleighschool/sigweft/compare/v1.0.0...v2.0.0) (2026-11-14)
+
+
+### ⚠ BREAKING CHANGES
+
+* support remote signature assets
+
+### Features
+
+* support remote signature assets ([7d57700](https://github.com/woodleighschool/sigweft/commit/7d577002c64b15c5b57b43d119807a7f33d2ca41))
+
+
+### Bug Fixes
+
+* **go:** update goodies/auth to v1.2.0 ([7726a22](https://github.com/woodleighschool/sigweft/commit/7726a2211cafe62cd649b34f1d6b27546f67158d))
+
 ## 1.0.0 (2026-11-12)
 
 
