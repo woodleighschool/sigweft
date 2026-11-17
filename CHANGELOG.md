@@ -1,5 +1,22 @@
 # Changelog
 
+## [2.0.0](https://github.com/woodleighschool/sigweft/compare/v1.0.0...v2.0.0) (2026-11-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* support remote signature assets
+
+### Features
+
+* support remote signature assets ([7d57700](https://github.com/woodleighschool/sigweft/commit/7d577002c64b15c5b57b43d119807a7f33d2ca41))
+
+
+### Bug Fixes
+
+* **go:** update goodies/auth to v1.2.0 ([7726a22](https://github.com/woodleighschool/sigweft/commit/7726a2211cafe62cd649b34f1d6b27546f67158d))
+* **npm:** update dependency lucide-react (1.72.0 → 1.73.0) ([#12](https://github.com/woodleighschool/sigweft/issues/12)) ([bde290e](https://github.com/woodleighschool/sigweft/commit/bde290e5293d28f508425bf168206c66cd6f627c))
+
 ## 1.0.0 (2026-11-12)
 
 
