@@ -1,5 +1,19 @@
 # Changelog
 
+## [2.0.1](https://github.com/woodleighschool/sigweft/compare/v2.0.0...v2.0.1) (2026-11-21)
+
+
+### Bug Fixes
+
+* **go:** update module github.com/danielgtaylor/huma/v2 (v2.40.0 → v2.41.0) ([#20](https://github.com/woodleighschool/sigweft/issues/20)) ([7295e30](https://github.com/woodleighschool/sigweft/commit/7295e303f74f3851bdbd61871644903251f33b1e))
+* **npm:** update dependency lucide-react (1.73.0 → 1.74.0) ([#16](https://github.com/woodleighschool/sigweft/issues/16)) ([c8feeb4](https://github.com/woodleighschool/sigweft/commit/c8feeb45cc14b935317ac31be9893f416fdf6d8d))
+* **npm:** update dependency lucide-react (1.74.0 → 1.75.0) ([#22](https://github.com/woodleighschool/sigweft/issues/22)) ([c759adb](https://github.com/woodleighschool/sigweft/commit/c759adb6cbcafd1cea9ebf1da08aa783da9bd531))
+* **npm:** update dependency lucide-react (1.75.0 → 1.76.0) ([#23](https://github.com/woodleighschool/sigweft/issues/23)) ([0b5e634](https://github.com/woodleighschool/sigweft/commit/0b5e634f3628cf7e0306178b5fc2ddbad7a5f5ce))
+* **npm:** update dependency lucide-react (1.76.0 → 1.77.0) ([#25](https://github.com/woodleighschool/sigweft/issues/25)) ([499218b](https://github.com/woodleighschool/sigweft/commit/499218b5b73177cee3d3769ea3ed1027b058daf9))
+* **npm:** update tanstack-query monorepo (5.107.1 → 5.108.0) ([#19](https://github.com/woodleighschool/sigweft/issues/19)) ([6fc4c1b](https://github.com/woodleighschool/sigweft/commit/6fc4c1b1875cf13d77cfd71468ed4ed8a051c882))
+* **npm:** update tanstack-query monorepo (5.108.0 → 5.108.1) ([#24](https://github.com/woodleighschool/sigweft/issues/24)) ([4c95725](https://github.com/woodleighschool/sigweft/commit/4c95725c2dd28b190503300c78b34fe9f924d23c))
+* **npm:** update tanstack-query monorepo (5.108.1 → 5.108.2) ([#26](https://github.com/woodleighschool/sigweft/issues/26)) ([39c43ea](https://github.com/woodleighschool/sigweft/commit/39c43eab80397011161ac0cc78c889602dca08a1))
+
 ## [2.0.0](https://github.com/woodleighschool/sigweft/compare/v1.0.0...v2.0.0) (2026-11-16)
 
 
