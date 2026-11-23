@@ -33,7 +33,6 @@ env.SIGWEFT_LISTEN = "127.0.0.1:8787"
 run = 'go run ./cmd/sigweft serve --config "${SIGWEFT_CONFIG:-examples/studio/sigweft.yaml}"'
 
 [tasks.build]
-description = "Build the web bundle and backend binary"
 depends = ["//web:build"]
 run = { task = "backend" }
 
@@ -51,7 +50,6 @@ run = [
 ]
 
 [tasks.frontend-check]
-description = "Verify the web app and generated contracts"
 depends = ["generate"]
 run = [
   '''
